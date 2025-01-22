@@ -5,6 +5,12 @@
 {% block extra_head %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
 <style>
+    .gigs-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
     .view-toggle {
         display: flex;
         gap: 0.5rem;
@@ -49,25 +55,33 @@
 
     .view-section {
         display: none;
-        max-width: 800px;
-        margin: 0 auto;
     }
 
     .view-section.active {
         display: block;
     }
 
-    .grid {
+    #list-view {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .gig-grid {
         display: grid;
-        gap: 1rem;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        justify-items: center;
+        gap: 1.5rem;
         width: 100%;
     }
 
-    .grid > div {
-        width: 100%;
-        max-width: 600px;
+    .gig-item {
+        background: #1a1a1a;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        border: 1px solid #333;
+    }
+
+    #calendar-view {
+        max-width: 1000px;
+        margin: 0 auto;
     }
 
     #calendar {
@@ -75,6 +89,7 @@
         padding: 1rem;
         border-radius: 0.5rem;
         border: 1px solid #333;
+        margin: 0 auto;
     }
 
     .fc {
@@ -118,9 +133,9 @@
     <div class="view-section active" id="list-view">
         {% for year, year_gigs in gigs|groupby('year')|reverse %}
             <h2 class="text-xl font-bold mb-4">{{ year }}</h2>
-            <div class="grid gap-4 mb-8">
+            <div class="gig-grid">
                 {% for gig in year_gigs|sort(attribute='date')|reverse %}
-                    <div class="bg-gray-800 p-4 rounded-lg">
+                    <div class="gig-item">
                         <div class="text-sm text-gray-400">{{ gig.date|date }}</div>
                         <h3 class="text-lg font-semibold mt-1">{{ gig.artist }}</h3>
                         <div class="text-gray-300">{{ gig.venue }}</div>
