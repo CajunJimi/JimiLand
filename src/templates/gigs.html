@@ -7,9 +7,10 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
 <style>
     .gigs-container {
+        width: 90%;
         max-width: 1200px;
         margin: 0 auto;
-        padding: 0 1rem;
+        padding: 2rem;
     }
 
     .view-toggle {
@@ -63,15 +64,16 @@
     }
 
     #list-view {
+        width: 100%;
         max-width: 800px;
         margin: 0 auto;
     }
 
     .gig-grid {
         display: grid;
+        grid-template-columns: 1fr;
         gap: 1.5rem;
         width: 100%;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     }
 
     .gig-item {
@@ -85,18 +87,19 @@
     }
 
     #calendar-view {
+        width: 100%;
         max-width: 1000px;
         margin: 0 auto;
         padding: 1rem;
     }
 
     #calendar {
+        width: 100%;
+        margin: 0 auto;
         background: #1a1a1a;
         padding: 1rem;
         border-radius: 0.5rem;
         border: 1px solid #333;
-        margin: 0 auto;
-        width: 100%;
     }
 
     .fc {
