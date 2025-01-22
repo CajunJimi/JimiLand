@@ -7,52 +7,30 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
 <style>
     .gigs-container {
-        width: 90%;
-        max-width: 1200px;
+        max-width: 1000px;
         margin: 0 auto;
         padding: 2rem;
     }
 
     .view-toggle {
         display: flex;
-        gap: 0.5rem;
+        gap: 1rem;
         justify-content: center;
         margin-bottom: 2rem;
     }
 
     .view-button {
         padding: 0.5rem 1rem;
-        background: #1a1a1a;
-        border: 1px solid #333;
-        color: #e0e0e0;
-        border-radius: 0.25rem;
+        border: 1px solid currentColor;
+        border-radius: 0.5rem;
         cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.3s;
     }
 
+    .view-button:hover,
     .view-button.active {
-        background: #2563eb;
-        border-color: #2563eb;
-        color: white;
-    }
-
-    .gigs-stats {
-        display: flex;
-        justify-content: center;
-        gap: 4rem;
-        margin: 2rem 0;
-        text-align: center;
-    }
-
-    .stat-number {
-        display: block;
-        font-size: 2rem;
-        color: #3b82f6;
-        font-weight: bold;
-    }
-
-    .stat-label {
-        color: #9ca3af;
-        font-size: 0.875rem;
+        opacity: 1;
     }
 
     .view-section {
@@ -64,56 +42,62 @@
     }
 
     #list-view {
-        width: 100%;
         max-width: 800px;
         margin: 0 auto;
     }
 
+    .year-section {
+        margin-bottom: 3rem;
+    }
+
+    .year-heading {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
     .gig-grid {
         display: grid;
-        grid-template-columns: 1fr;
         gap: 1.5rem;
-        width: 100%;
     }
 
     .gig-item {
-        background: #1a1a1a;
         padding: 1.5rem;
+        border: 1px solid currentColor;
         border-radius: 0.5rem;
-        border: 1px solid #333;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
+        opacity: 0.8;
+        transition: opacity 0.3s;
+    }
+
+    .gig-item:hover {
+        opacity: 1;
+    }
+
+    .gig-date {
+        font-size: 0.875rem;
+        opacity: 0.7;
+    }
+
+    .gig-artist {
+        font-size: 1.125rem;
+        font-weight: 500;
+        margin: 0.5rem 0;
     }
 
     #calendar-view {
-        width: 100%;
         max-width: 1000px;
         margin: 0 auto;
-        padding: 1rem;
     }
 
     #calendar {
-        width: 100%;
-        margin: 0 auto;
-        background: #1a1a1a;
         padding: 1rem;
+        border: 1px solid currentColor;
         border-radius: 0.5rem;
-        border: 1px solid #333;
     }
 
     .fc {
-        --fc-border-color: #333;
-        --fc-button-text-color: #e0e0e0;
-        --fc-button-bg-color: #1a1a1a;
-        --fc-button-border-color: #333;
-        --fc-button-hover-bg-color: #2a2a2a;
-        --fc-button-hover-border-color: #444;
-        --fc-button-active-bg-color: #2563eb;
-        --fc-button-active-border-color: #2563eb;
-        --fc-event-bg-color: #2563eb;
-        --fc-event-border-color: #2563eb;
-        --fc-today-bg-color: #2a2a2a;
+        font-family: 'Inter', sans-serif;
     }
 </style>
 {% endblock %}
@@ -125,38 +109,25 @@
         <button class="view-button" data-view="calendar">Calendar View</button>
     </div>
 
-    <div class="gigs-stats">
-        <div class="stat-item">
-            <span class="stat-number">{{ gigs|length }}</span>
-            <span class="stat-label">Total Gigs</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-number">{{ venues|length }}</span>
-            <span class="stat-label">Venues</span>
-        </div>
-        <div class="stat-item">
-            <span class="stat-number">{{ artists|length }}</span>
-            <span class="stat-label">Artists</span>
-        </div>
-    </div>
-
     <div class="view-section active" id="list-view">
         {% for year, year_gigs in gigs|groupby('year')|reverse %}
-            <h2 class="text-xl font-bold mb-4">{{ year }}</h2>
-            <div class="gig-grid">
-                {% for gig in year_gigs|sort(attribute='date')|reverse %}
-                    <div class="gig-item">
-                        <div class="text-sm text-gray-400">{{ gig.date|date }}</div>
-                        <h3 class="text-lg font-semibold mt-1">{{ gig.artist }}</h3>
-                        <div class="text-gray-300">{{ gig.venue }}</div>
-                        {% if gig.rating %}
-                            <div class="mt-2">{% for i in range(gig.rating) %}⭐{% endfor %}</div>
-                        {% endif %}
-                        {% if gig.notes %}
-                            <div class="mt-2 text-gray-400">{{ gig.notes }}</div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
+            <div class="year-section">
+                <h2 class="year-heading">{{ year }}</h2>
+                <div class="gig-grid">
+                    {% for gig in year_gigs|sort(attribute='date')|reverse %}
+                        <div class="gig-item">
+                            <div class="gig-date">{{ gig.date|date }}</div>
+                            <div class="gig-artist">{{ gig.artist }}</div>
+                            <div class="gig-venue">{{ gig.venue }}</div>
+                            {% if gig.rating %}
+                                <div class="gig-rating">{% for i in range(gig.rating) %}⭐{% endfor %}</div>
+                            {% endif %}
+                            {% if gig.notes %}
+                                <div class="gig-notes">{{ gig.notes }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         {% endfor %}
     </div>
@@ -170,53 +141,56 @@
 {% block extra_scripts %}
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // View Toggle
-    const viewButtons = document.querySelectorAll('.view-button');
-    const viewSections = document.querySelectorAll('.view-section');
+var calendarEvents = {{ calendar_events|default([])|tojson|safe }};
 
-    viewButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const view = button.dataset.view;
+document.addEventListener('DOMContentLoaded', function() {
+    var viewButtons = document.querySelectorAll('.view-button');
+    var viewSections = document.querySelectorAll('.view-section');
+    var calendar = null;
+
+    viewButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            var view = button.dataset.view;
             
-            // Update buttons
-            viewButtons.forEach(btn => btn.classList.remove('active'));
+            viewButtons.forEach(function(btn) {
+                btn.classList.remove('active');
+            });
             button.classList.add('active');
             
-            // Update sections
-            viewSections.forEach(section => {
+            viewSections.forEach(function(section) {
                 section.classList.remove('active');
-                if (section.id === `${view}-view`) {
+                if (section.id === view + '-view') {
                     section.classList.add('active');
                 }
             });
 
-            // Only render calendar if it exists and calendar view is active
-            if (view === 'calendar') {
+            if (view === 'calendar' && calendar) {
                 calendar.render();
             }
         });
     });
 
-    // Initialize Calendar
-    let calendar = null;
-    const calendarEl = document.getElementById('calendar');
+    var calendarEl = document.getElementById('calendar');
     if (calendarEl) {
-        calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            events: {{ calendar_events|tojson|safe }},
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,dayGridYear'
-            },
-            height: 'auto',
-            firstDay: 1,
-            displayEventEnd: false,
-            eventDisplay: 'block',
-            dayMaxEvents: true
-        });
-        calendar.render();
+        try {
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: calendarEvents,
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,dayGridYear'
+                },
+                height: 'auto',
+                firstDay: 1,
+                displayEventEnd: false,
+                eventDisplay: 'block',
+                dayMaxEvents: true
+            });
+            calendar.render();
+        } catch (error) {
+            console.error('Error initializing calendar:', error);
+        }
     }
 });
 </script>

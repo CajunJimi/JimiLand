@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,32 +8,69 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ site_base_url }}/static/css/styles.css">
-    {% if theme == 'dark' %}
-    <link rel="stylesheet" href="{{ site_base_url }}/static/css/dark-theme.css">
-    {% endif %}
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+        }
+        
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .theme-toggle {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            background: none;
+            border: 1px solid currentColor;
+        }
+    </style>
+
     {% block extra_head %}{% endblock %}
 </head>
-<body class="dark:bg-gray-900 dark:text-white">
+<body>
     <div class="min-h-screen">
-        <header class="border-b border-gray-800 py-4">
-            <div class="container mx-auto px-4">
+        <header class="border-b py-4">
+            <div class="container">
                 <div class="flex justify-between items-center">
                     <h1 class="text-xl font-bold">
-                        <a href="{{ site_base_url }}/" class="text-blue-400">{{ site_title }}</a>
+                        <a href="{{ site_base_url }}/">{{ site_title }}</a>
                     </h1>
-                    <nav class="space-x-6">
-                        <a href="{{ site_base_url }}/" class="text-gray-300 hover:text-white">Home</a>
-                        <a href="{{ site_base_url }}/about/" class="text-gray-300 hover:text-white">About</a>
-                        <a href="{{ site_base_url }}/gigs/" class="text-gray-300 hover:text-white">Gigs</a>
-                        <a href="{{ site_base_url }}/archive/" class="text-gray-300 hover:text-white">Archive</a>
-                    </nav>
+                    <div class="flex items-center gap-6">
+                        <nav class="space-x-6">
+                            <a href="{{ site_base_url }}/" class="hover:opacity-75">Home</a>
+                            <a href="{{ site_base_url }}/about/" class="hover:opacity-75">About</a>
+                            <a href="{{ site_base_url }}/gigs/" class="hover:opacity-75">Gigs</a>
+                            <a href="{{ site_base_url }}/archive/" class="hover:opacity-75">Archive</a>
+                        </nav>
+                        <button class="theme-toggle" onclick="toggleTheme()">
+                            <span class="light-icon">🌞</span>
+                            <span class="dark-icon" style="display: none;">🌙</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </header>
 
-        <main class="container mx-auto px-4 py-8 flex">
+        <main class="container py-8 flex">
             <div class="sidebar">
                 {% include 'spotify.html' %}
             </div>
@@ -42,13 +79,43 @@
             </div>
         </main>
 
-        <footer class="mt-auto py-6 text-center text-gray-500">
+        <footer class="mt-auto py-6 text-center opacity-75">
             <p>&copy; {{ current_year }} {{ site_title }}</p>
         </footer>
     </div>
 
-    <!-- JavaScript -->
-    <script src="{{ site_base_url }}/static/js/main.js"></script>
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const lightIcon = document.querySelector('.light-icon');
+            const darkIcon = document.querySelector('.dark-icon');
+            
+            if (isDark) {
+                html.removeAttribute('data-theme');
+                lightIcon.style.display = 'inline';
+                darkIcon.style.display = 'none';
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                lightIcon.style.display = 'none';
+                darkIcon.style.display = 'inline';
+            }
+            
+            // Save preference
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        }
+
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.querySelector('.light-icon').style.display = 'none';
+                document.querySelector('.dark-icon').style.display = 'inline';
+            }
+        });
+    </script>
+
     {% block extra_scripts %}{% endblock %}
 </body>
 </html>
