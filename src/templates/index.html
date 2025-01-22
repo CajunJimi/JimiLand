@@ -11,7 +11,7 @@
             {% for article in featured_articles %}
             <article class="article-card">
                 <h3 class="article-title">
-                    <a href="/posts/{{ article.slug }}/" class="hover:opacity-75 transition-opacity">
+                    <a href="{{ site_base_url }}/{{ article.slug }}/" class="hover:opacity-75 transition-opacity">
                         {{ article.title }}
                     </a>
                 </h3>
@@ -38,7 +38,7 @@
             {% for article in articles %}
             <article class="article-card">
                 <h3 class="article-title">
-                    <a href="/posts/{{ article.slug }}/" class="hover:opacity-75 transition-opacity">
+                    <a href="{{ site_base_url }}/{{ article.slug }}/" class="hover:opacity-75 transition-opacity">
                         {{ article.title }}
                     </a>
                 </h3>
@@ -60,7 +60,7 @@
 
     {% if articles|length >= 5 %}
     <div class="mt-12 text-center">
-        <a href="/archive/" class="inline-block px-6 py-3 border border-[var(--border-color)] rounded-lg hover:border-[var(--text-color)] transition-colors">
+        <a href="{{ site_base_url }}/archive/" class="inline-block px-6 py-3 border border-[var(--border-color)] rounded-lg hover:border-[var(--text-color)] transition-colors">
             View Archive
         </a>
     </div>
