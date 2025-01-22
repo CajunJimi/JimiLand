@@ -57,6 +57,19 @@
         display: block;
     }
 
+    .grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        justify-items: center;
+        width: 100%;
+    }
+
+    .grid > div {
+        width: 100%;
+        max-width: 600px;
+    }
+
     #calendar {
         background: #1a1a1a;
         padding: 1rem;
