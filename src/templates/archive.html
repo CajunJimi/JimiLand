@@ -25,7 +25,7 @@
                     {% for article in years[year]|sort(attribute='date', reverse=true) %}
                     <article class="article-card">
                         <h3 class="article-title">
-                            <a href="{{ site_base_url }}/{{ article.slug }}/" class="hover:opacity-75 transition-opacity">
+                            <a href="{{ site_base_url }}/posts/{{ article.slug }}/" class="hover:opacity-75 transition-opacity">
                                 {{ article.title }}
                             </a>
                         </h3>

@@ -11,7 +11,7 @@
             {% for article in featured_articles %}
             <article class="article-card">
                 <h3 class="article-title">
-                    <a href="{{ site_base_url }}/{{ article.slug }}/" class="hover:opacity-75 transition-opacity">
+                    <a href="{{ site_base_url }}/posts/{{ article.slug }}/" class="hover:opacity-75 transition-opacity">
                         {{ article.title }}
                     </a>
                 </h3>
@@ -38,7 +38,7 @@
             {% for article in articles %}
             <article class="article-card">
                 <h3 class="article-title">
-                    <a href="{{ site_base_url }}/{{ article.slug }}/" class="hover:opacity-75 transition-opacity">
+                    <a href="{{ site_base_url }}/posts/{{ article.slug }}/" class="hover:opacity-75 transition-opacity">
                         {{ article.title }}
                     </a>
                 </h3>
