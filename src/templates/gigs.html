@@ -3,6 +3,7 @@
 {% block title %}Gigs - {{ site_title }}{% endblock %}
 
 {% block extra_head %}
+<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
 <style>
     .gigs-container {
@@ -187,29 +188,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-            if (view === 'calendar' && calendar) {
+            // Only render calendar if it exists and calendar view is active
+            if (view === 'calendar') {
                 calendar.render();
             }
         });
     });
 
     // Initialize Calendar
+    let calendar = null;
     const calendarEl = document.getElementById('calendar');
-    const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        events: {{ calendar_events|tojson|safe }},
-        headerToolbar: {
-            left: 'prev,next today',
-            center: 'title',
-            right: 'dayGridMonth,dayGridYear'
-        },
-        height: 'auto',
-        firstDay: 1,
-        displayEventEnd: false,
-        eventDisplay: 'block',
-        dayMaxEvents: true
-    });
-    calendar.render();
+    if (calendarEl) {
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: {{ calendar_events|tojson|safe }},
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,dayGridYear'
+            },
+            height: 'auto',
+            firstDay: 1,
+            displayEventEnd: false,
+            eventDisplay: 'block',
+            dayMaxEvents: true
+        });
+        calendar.render();
+    }
 });
 </script>
 {% endblock %}
