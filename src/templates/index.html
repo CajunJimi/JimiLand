@@ -3,109 +3,67 @@
 {% block title %}{{ site_title }}{% endblock %}
 
 {% block content %}
-    <div class="home-page">
-        <div class="article-list">
-            {% for article in articles %}
-                <div class="article-item">
-                    <div class="article-meta">
-                        {{ article.date|date }}
-                        <span class="reading-time">{{ article.content_html|reading_time }}</span>
-                    </div>
-                    <div class="article-content">
-                        <a href="{{ site_base_url }}/posts/{{ article.slug }}/" class="article-title">{{ article.title }}</a>
-                    </div>
+<div class="max-w-3xl mx-auto">
+    {% if featured_articles %}
+    <section class="mb-16">
+        <h2 class="mb-6">Featured</h2>
+        <div class="space-y-6">
+            {% for article in featured_articles %}
+            <article class="article-card">
+                <h3 class="article-title">
+                    <a href="{{ site_base_url }}/{{ article.slug }}/" class="hover:opacity-75 transition-opacity">
+                        {{ article.title }}
+                    </a>
+                </h3>
+                <div class="article-meta">
+                    {{ article.date|date }}
+                    {% if article.reading_time %}
+                    • {{ article.reading_time }}
+                    {% endif %}
                 </div>
+                {% if article.excerpt %}
+                <div class="article-excerpt">
+                    {{ article.excerpt }}
+                </div>
+                {% endif %}
+            </article>
             {% endfor %}
         </div>
+    </section>
+    {% endif %}
 
-        {% if pagination %}
-            <nav class="pagination">
-                {% if pagination.prev_page %}
-                    <a href="{{ site_base_url }}{{ pagination.prev_page }}" class="pagination-link">← Previous</a>
+    <section>
+        <h2 class="mb-6">Latest Posts</h2>
+        <div class="space-y-6">
+            {% for article in articles %}
+            <article class="article-card">
+                <h3 class="article-title">
+                    <a href="{{ site_base_url }}/{{ article.slug }}/" class="hover:opacity-75 transition-opacity">
+                        {{ article.title }}
+                    </a>
+                </h3>
+                <div class="article-meta">
+                    {{ article.date|date }}
+                    {% if article.reading_time %}
+                    • {{ article.reading_time }}
+                    {% endif %}
+                </div>
+                {% if article.excerpt %}
+                <div class="article-excerpt">
+                    {{ article.excerpt }}
+                </div>
                 {% endif %}
-                <span class="pagination-current">Page {{ pagination.current_page }} of {{ pagination.total_pages }}</span>
-                {% if pagination.next_page %}
-                    <a href="{{ site_base_url }}{{ pagination.next_page }}" class="pagination-link">Next →</a>
-                {% endif %}
-            </nav>
-        {% endif %}
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% if articles|length >= 5 %}
+    <div class="mt-12 text-center">
+        <a href="{{ site_base_url }}/archive/" class="inline-block px-6 py-3 border border-[var(--border-color)] rounded-lg hover:border-[var(--text-color)] transition-colors">
+            View Archive
+        </a>
     </div>
-
-    <style>
-        .home-page {
-            max-width: 800px;
-            margin: 0 auto;
-            padding-top: 2rem;
-        }
-
-        .article-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .article-item {
-            display: grid;
-            grid-template-columns: 200px 1fr;
-            gap: 2rem;
-            padding: 1rem;
-            border-radius: 8px;
-            transition: background-color 0.2s;
-        }
-
-        .article-item:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .article-meta {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
-        .reading-time {
-            display: block;
-            margin-top: 0.5rem;
-            font-size: 0.8rem;
-            color: #888;
-        }
-
-        .article-content {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .article-title {
-            color: #fff;
-            font-size: 1.1rem;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .article-title:hover {
-            color: #3b82f6;
-        }
-
-        .pagination {
-            margin-top: 3rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .pagination-link {
-            color: #3b82f6;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .pagination-link:hover {
-            color: #60a5fa;
-        }
-
-        .pagination-current {
-            color: #666;
-        }
-    </style>
+    {% endif %}
+</div>
 {% endblock %}

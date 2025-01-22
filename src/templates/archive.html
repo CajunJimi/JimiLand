@@ -4,8 +4,8 @@
 {% block meta_description %}Archive of all articles on {{ site_title }}{% endblock %}
 
 {% block content %}
-    <div class="archive-page">
-        <h1>Archive</h1>
+    <div class="max-w-3xl mx-auto">
+        <h1 class="mb-8 text-center">Archive</h1>
         
         {# Group articles by year #}
         {% set years = {} %}
@@ -19,157 +19,40 @@
         
         {# Display articles grouped by year #}
         {% for year in years|sort(reverse=true) %}
-            <div class="year-section">
-                <h2>{{ year }}</h2>
-                <ul class="article-list">
+            <div class="mb-12">
+                <h2 class="mb-6">{{ year }}</h2>
+                <div class="space-y-6">
                     {% for article in years[year]|sort(attribute='date', reverse=true) %}
-                        <li class="article-item">
-                            <div class="article-meta">
-                                <time class="article-date" datetime="{{ article.date }}">{{ article.date|date }}</time>
-                                <span class="reading-time">{{ article.content_html|reading_time }}</span>
+                    <article class="article-card">
+                        <h3 class="article-title">
+                            <a href="{{ site_base_url }}/posts/{{ article.slug }}/" class="hover:opacity-75 transition-opacity">
+                                {{ article.title }}
+                            </a>
+                        </h3>
+                        <div class="article-meta">
+                            <time datetime="{{ article.date }}">{{ article.date|date }}</time>
+                            {% if article.content_html %}
+                            • {{ article.content_html|reading_time }}
+                            {% endif %}
+                            {% if article.tags %}
+                            <div class="mt-2 space-x-2">
+                                {% for tag in article.tags %}
+                                <a href="{{ site_base_url }}/tags/{{ tag }}" class="inline-block px-2 py-1 text-sm border border-[var(--border-color)] rounded hover:border-[var(--text-color)] transition-colors">
+                                    {{ tag }}
+                                </a>
+                                {% endfor %}
                             </div>
-                            <div class="article-content">
-                                <a href="/posts/{{ article.slug }}/" class="article-title">{{ article.title }}</a>
-                                {% if article.tags %}
-                                    <div class="article-tags">
-                                        {% for tag in article.tags %}
-                                            <a href="/tags/{{ tag }}" class="tag">{{ tag }}</a>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </li>
+                            {% endif %}
+                        </div>
+                        {% if article.excerpt %}
+                        <div class="article-excerpt">
+                            {{ article.excerpt }}
+                        </div>
+                        {% endif %}
+                    </article>
                     {% endfor %}
-                </ul>
+                </div>
             </div>
         {% endfor %}
     </div>
-
-    <style>
-        .archive-page {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-        }
-        
-        .archive-page h1 {
-            margin-bottom: 3rem;
-            text-align: center;
-            font-size: 2.5rem;
-            color: var(--text-color);
-        }
-        
-        .year-section {
-            margin-bottom: 4rem;
-        }
-        
-        .year-section h2 {
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 0.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--primary-color);
-            font-size: 1.8rem;
-        }
-        
-        .article-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .article-item {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 1.5rem;
-            padding: 1rem;
-            border-radius: 8px;
-            transition: background-color 0.2s ease;
-        }
-        
-        .article-item:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-        
-        .article-meta {
-            flex-shrink: 0;
-            width: 120px;
-            margin-right: 1.5rem;
-        }
-        
-        .article-date {
-            color: var(--muted-color);
-            font-size: 0.9rem;
-            font-family: monospace;
-        }
-        
-        .reading-time {
-            font-size: 0.8rem;
-            color: var(--muted-color);
-            margin-left: 0.5rem;
-        }
-        
-        .article-content {
-            flex-grow: 1;
-        }
-        
-        .article-title {
-            display: block;
-            color: var(--text-color);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-            transition: color 0.2s ease;
-        }
-        
-        .article-title:hover {
-            color: var(--primary-color);
-        }
-        
-        .article-tags {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-top: 0.5rem;
-        }
-        
-        .tag {
-            background: rgba(52, 152, 219, 0.1);
-            color: var(--primary-color);
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-        
-        .tag:hover {
-            background: rgba(52, 152, 219, 0.2);
-        }
-        
-        @media (max-width: 640px) {
-            .article-item {
-                flex-direction: column;
-            }
-            
-            .article-meta {
-                width: auto;
-                margin-right: 0;
-                margin-bottom: 0.5rem;
-            }
-            
-            .article-tags {
-                margin-top: 0.75rem;
-            }
-            
-            .archive-page h1 {
-                font-size: 2rem;
-                margin-bottom: 2rem;
-            }
-            
-            .year-section h2 {
-                font-size: 1.5rem;
-            }
-        }
-    </style>
 {% endblock %}
