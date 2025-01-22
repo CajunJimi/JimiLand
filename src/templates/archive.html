@@ -25,7 +25,7 @@
                     {% for article in years[year]|sort(attribute='date', reverse=true) %}
                     <article class="article-card">
                         <h3 class="article-title">
-                            <a href="{{ site_base_url }}/posts/{{ article.slug }}/" class="hover:opacity-75 transition-opacity">
+                            <a href="/posts/{{ article.slug }}/" class="hover:opacity-75 transition-opacity">
                                 {{ article.title }}
                             </a>
                         </h3>
@@ -37,7 +37,7 @@
                             {% if article.tags %}
                             <div class="mt-2 space-x-2">
                                 {% for tag in article.tags %}
-                                <a href="{{ site_base_url }}/tags/{{ tag }}" class="inline-block px-2 py-1 text-sm border border-[var(--border-color)] rounded hover:border-[var(--text-color)] transition-colors">
+                                <a href="/tags/{{ tag }}" class="inline-block px-2 py-1 text-sm border border-[var(--border-color)] rounded hover:border-[var(--text-color)] transition-colors">
                                     {{ tag }}
                                 </a>
                                 {% endfor %}
