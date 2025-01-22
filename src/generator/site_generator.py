@@ -67,23 +67,10 @@ class SiteGenerator:
         )
         
         # Add custom filters
-        def format_date(value, format='%B %d, %Y'):
-            try:
-                if isinstance(value, str):
-                    date_obj = datetime.strptime(value, '%Y-%m-%d')
-                else:
-                    date_obj = value
-                return date_obj.strftime(format)
-            except:
-                return value
-                
-        self.jinja_env.filters['date'] = format_date
+        self.jinja_env.filters['date'] = date_filter
         
         # Add reading time filter
         self.jinja_env.filters['reading_time'] = self._calculate_reading_time
-        
-        # Add date filter
-        self.jinja_env.filters['date'] = date_filter
         
         # Site configuration
         self.site_config = {
@@ -292,8 +279,7 @@ class SiteGenerator:
 
     def render_template(self, template_name: str, context: Dict) -> str:
         """Render a template with the given context."""
-        env = Environment(loader=FileSystemLoader(self.template_dir))
-        template = env.get_template(template_name)
+        template = self.jinja_env.get_template(template_name)
         
         # Add Spotify data to context only if credentials are available
         try:
