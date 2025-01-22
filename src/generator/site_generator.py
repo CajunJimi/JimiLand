@@ -71,6 +71,11 @@ class SiteGenerator:
         
         # Add reading time filter
         self.jinja_env.filters['reading_time'] = self._calculate_reading_time
+
+        # Add static_url function
+        def static_url(filename):
+            return f"/static/{filename}"
+        self.jinja_env.globals['static_url'] = static_url
         
         # Site configuration
         self.site_config = {

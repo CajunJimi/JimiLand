@@ -1,0 +1,8 @@
+# Git Aliases
+git config --global alias.ac '!git add . && git commit -m'  # git ac "commit message"
+git config --global alias.s 'status -s'                     # git s
+git config --global alias.l 'log --oneline'                # git l
+git config --global alias.p 'push'                         # git p
+git config --global alias.acp '!f() { git add . && git commit -m "$1" && git push; }; f'  # git acp "commit message"
+git config --global alias.undo 'reset HEAD~1'              # git undo
+git config --global alias.amend 'commit --amend'           # git amend
