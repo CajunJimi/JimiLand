@@ -127,6 +127,7 @@ class SiteGenerator:
         self._generate_archive_page(articles)
         self._generate_gigs_page()
         self._generate_about_page()
+        self._generate_portfolio_page()
         self._copy_static_files()
 
     def _get_articles(self) -> List[Dict]:
@@ -507,6 +508,23 @@ class SiteGenerator:
         except Exception as e:
             print(f"Error generating about page: {e}")
             raise
+
+    def _generate_portfolio_page(self):
+        """Generate the portfolio page."""
+        output = self.render_template('portfolio.html', {
+            'site_title': self.site_config['title'],
+            'site_description': self.site_config['description'],
+            'site_author': self.site_config['author'],
+            'site_base_url': self.site_config['base_url'],
+            'current_year': datetime.now().year
+        })
+        
+        # Create portfolio directory and write HTML
+        portfolio_dir = self.output_dir / 'portfolio'
+        portfolio_dir.mkdir(parents=True, exist_ok=True)
+        
+        with open(portfolio_dir / 'index.html', 'w', encoding='utf-8') as f:
+            f.write(output)
 
     def _generate_archive_page(self, articles: List[Dict] = None):
         """Generate archive page with all articles."""
