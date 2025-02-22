@@ -74,8 +74,15 @@ class SiteGenerator:
 
         # Add static_url function
         def static_url(filename):
-            return f"/static/{filename}"
+            base_url = self.site_config['base_url']
+            return f"{base_url}/static/{filename.lstrip('/')}"
         self.jinja_env.globals['static_url'] = static_url
+        
+        # Add url_for function for generating URLs
+        def url_for(path):
+            base_url = self.site_config['base_url']
+            return f"{base_url}/{path.lstrip('/')}"
+        self.jinja_env.globals['url_for'] = url_for
         
         # Site configuration
         self.site_config = {
