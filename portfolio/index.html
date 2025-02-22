@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Jimi Land</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --accent-color: #3b82f6;
+            --border-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --accent-color: #60a5fa;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Base styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background-color: var(--accent-color);
+            z-index: 1000;
+            transition: width 0.1s ease-out;
+        }
+
+        /* Layout */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Typography */
+        h1 { font-size: 2rem; font-weight: 700; }
+        h2 { font-size: 1.5rem; font-weight: 600; }
+        h3 { font-size: 1.25rem; font-weight: 600; }
+        
+        /* Navigation */
+        .nav-link {
+            opacity: 0.8;
+            transition: opacity 0.3s;
+            font-size: 1rem;
+        }
+        
+        .nav-link:hover {
+            opacity: 1;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            background: none;
+            border: 1px solid var(--border-color);
+            transition: border-color 0.3s;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--text-color);
+        }
+
+        /* Article cards */
+        .article-card {
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            transition: transform 0.2s, border-color 0.3s;
+        }
+
+        .article-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--text-color);
+        }
+
+        .article-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .article-meta {
+            font-size: 0.875rem;
+            opacity: 0.7;
+        }
+
+        .article-excerpt {
+            margin-top: 1rem;
+            line-height: 1.6;
+        }
+    </style>
+
+    
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="min-h-screen">
+        <header class="border-b border-[var(--border-color)] py-4 sticky top-0 bg-[var(--bg-color)] z-50">
+            <div class="container">
+                <div class="flex justify-between items-center">
+                    <h1 class="text-xl">
+                        <a href="https://jimi.land/" class="hover:opacity-75 transition-opacity">Jimi Land</a>
+                    </h1>
+                    <div class="flex items-center gap-6">
+                        <nav class="space-x-6">
+                            <a href="https://jimi.land/" class="nav-link">Home</a>
+                            <a href="https://jimi.land/about" class="nav-link">About</a>
+                            <a href="https://jimi.land/gigs" class="nav-link">Gigs</a>
+                            <a href="https://jimi.land/archive" class="nav-link">Archive</a>
+                            <a href="https://jimi.land/portfolio" class="nav-link">Portfolio</a>
+                        </nav>
+                        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                            <span class="light-icon">🌞</span>
+                            <span class="dark-icon" style="display: none;">🌙</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="container py-8">
+            
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold mb-8">Portfolio</h1>
+    
+    <!-- Project Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="article-card">
+            <h2 class="text-2xl font-semibold mb-3">SecureLogRedactor</h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">A powerful tool for automatically redacting sensitive information from log files, ensuring data security and compliance.</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded-full text-sm">Python</span>
+                <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded-full text-sm">RegEx</span>
+                <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded-full text-sm">Security</span>
+            </div>
+            <a href="https://cajuntools.site/" class="text-blue-600 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">View Project →</a>
+        </div>
+    </div>
+</div>
+
+        </main>
+
+        <footer class="mt-auto py-6 text-center opacity-75">
+            <p>&copy; 2025 Jimi Land</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const lightIcon = document.querySelector('.light-icon');
+            const darkIcon = document.querySelector('.dark-icon');
+            
+            if (isDark) {
+                html.removeAttribute('data-theme');
+                lightIcon.style.display = 'inline';
+                darkIcon.style.display = 'none';
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                lightIcon.style.display = 'none';
+                darkIcon.style.display = 'inline';
+            }
+            
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        }
+
+        // Progress bar
+        function updateProgressBar() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved theme
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.querySelector('.light-icon').style.display = 'none';
+                document.querySelector('.dark-icon').style.display = 'inline';
+            }
+
+            // Setup progress bar
+            window.addEventListener('scroll', updateProgressBar);
+        });
+    </script>
+
+    
+</body>
+</html>
