@@ -49,42 +49,82 @@ class NotionProcessor:
             blocks: List of Notion block objects
             
         Returns:
-            str: HTML representation of the blocks
+            HTML string
         """
         html_parts = []
-        list_context = {'type': None, 'count': 0}
-
-        for block in blocks:
-            block_type = block.get('type')
+        in_list = False
+        list_type = None
+        
+        # Check if this is a letter format
+        is_letter = any('HST - Letter' in block.get('heading_1', {}).get('rich_text', [{}])[0].get('text', {}).get('content', '') 
+                       for block in blocks if block['type'] == 'heading_1')
+        
+        if is_letter:
+            # Extract letter metadata
+            date = None
+            address = []
+            salutation = None
+            body_started = False
+            body_parts = []
             
-            # Handle list items specially to create proper HTML lists
-            if block_type in ['bulleted_list_item', 'numbered_list_item']:
-                if list_context['type'] != block_type:
-                    # Close previous list if exists
-                    if list_context['type']:
-                        html_parts.append(self._close_list(list_context['type']))
-                    # Start new list
-                    html_parts.append(self._open_list(block_type))
-                    list_context['type'] = block_type
-                    list_context['count'] = 1
-            else:
-                # Close any open list
-                if list_context['type']:
-                    html_parts.append(self._close_list(list_context['type']))
-                    list_context['type'] = None
-                    list_context['count'] = 0
-
-            # Process the block
-            if handler := self.block_handlers.get(block_type):
-                html = handler(block)
-                if html:
+            for block in blocks:
+                if block['type'] == 'paragraph':
+                    text = self._get_text_content(block['paragraph']['rich_text'])
+                    if not date and re.match(r'\d{4}-\d{2}-\d{2}', text):
+                        date = text
+                    elif not salutation and text.startswith('Dear '):
+                        salutation = text
+                    elif not body_started and text.strip():
+                        if not salutation:
+                            address.append(text)
+                        else:
+                            body_started = True
+                            body_parts.append(f'<p>{text}</p>')
+                    elif body_started:
+                        body_parts.append(f'<p>{text}</p>')
+                        
+            # Structure letter HTML
+            html_parts.append('<div class="letter">')
+            if date:
+                html_parts.append(f'<div class="letter-date">{date}</div>')
+            if address:
+                html_parts.append('<div class="letter-address">')
+                html_parts.extend(f'<div>{line}</div>' for line in address)
+                html_parts.append('</div>')
+            if salutation:
+                html_parts.append(f'<div class="letter-salutation">{salutation}</div>')
+            html_parts.append('<div class="letter-body">')
+            html_parts.extend(body_parts)
+            html_parts.append('</div>')
+            html_parts.append('</div>')
+            
+        else:
+            # Regular content processing
+            for block in blocks:
+                block_type = block['type']
+                if block_type in self.block_handlers:
+                    handler = self.block_handlers[block_type]
+                    html = handler(block)
+                    
+                    if block_type in ['bulleted_list_item', 'numbered_list_item']:
+                        if not in_list or list_type != block_type:
+                            if in_list:
+                                html_parts.append(self._end_list(list_type))
+                            html_parts.append(self._start_list(block_type))
+                            in_list = True
+                            list_type = block_type
+                    else:
+                        if in_list:
+                            html_parts.append(self._end_list(list_type))
+                            in_list = False
+                            list_type = None
+                            
                     html_parts.append(html)
-
-        # Close any remaining open list
-        if list_context['type']:
-            html_parts.append(self._close_list(list_context['type']))
-
-        return '\n'.join(filter(None, html_parts))
+                    
+            if in_list:
+                html_parts.append(self._end_list(list_type))
+                
+        return '\n'.join(html_parts)
 
     def _process_rich_text(self, rich_text: List[Dict]) -> str:
         """
@@ -145,11 +185,11 @@ class NotionProcessor:
         text = self._process_rich_text(block[block['type']]['rich_text'])
         return f'<li>{text}</li>'
 
-    def _open_list(self, list_type: str) -> str:
+    def _start_list(self, list_type: str) -> str:
         """Return opening tag for a list."""
         return '<ul>' if list_type == 'bulleted_list_item' else '<ol>'
 
-    def _close_list(self, list_type: str) -> str:
+    def _end_list(self, list_type: str) -> str:
         """Return closing tag for a list."""
         return '</ul>' if list_type == 'bulleted_list_item' else '</ol>'
 
@@ -237,3 +277,27 @@ class NotionProcessor:
             if match := re.search(pattern, url):
                 return match.group(1)
         return None
+
+    def _get_text_content(self, rich_text: List[Dict]) -> str:
+        """
+        Process Notion's rich text array into plain text.
+        
+        Args:
+            rich_text: List of Notion rich text objects
+            
+        Returns:
+            str: Plain text
+        """
+        if not rich_text:
+            return ''
+
+        result = []
+        for text in rich_text:
+            try:
+                content = text.get('text', {}).get('content', '')
+                result.append(content)
+            except Exception as e:
+                print(f"Error processing rich text: {str(e)}")
+                continue
+
+        return ''.join(result)
