@@ -24,6 +24,20 @@ from jinja2 import Environment, FileSystemLoader
 from ..notion.processor import NotionProcessor
 from urllib.parse import quote
 from ..spotify.spotify import get_current_track
+import logging
+from PIL import Image
+from tenacity import retry, stop_after_attempt, wait_exponential
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('logs/site_generator.log'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
 
 def date_filter(date_str):
     """Convert date string to formatted date"""
@@ -42,25 +56,41 @@ class SiteGenerator:
     """
 
     def __init__(self, output_dir: str, template_dir: str):
-        """
-        Initialize the site generator.
-        
-        Args:
-            output_dir: Directory where generated site will be written
-            template_dir: Directory containing Jinja2 templates
-        """
-        # Load environment variables
-        load_dotenv()
-        
-        # Initialize Notion client and processor
-        self.notion = Client(auth=os.getenv('NOTION_API_KEY'))
-        self.processor = NotionProcessor()
-        
-        # Set up paths
-        self.output_dir = Path(output_dir)
-        self.template_dir = Path(template_dir)
-        
-        # Initialize Jinja environment
+        """Initialize the site generator with improved error handling."""
+        try:
+            # Load environment variables
+            load_dotenv()
+            
+            # Initialize Notion client and processor
+            notion_api_key = os.getenv('NOTION_API_KEY')
+            if not notion_api_key:
+                raise ValueError("NOTION_API_KEY environment variable is not set")
+            
+            self.notion = Client(auth=notion_api_key)
+            self.processor = NotionProcessor()
+            
+            # Set up paths
+            self.output_dir = Path(output_dir)
+            self.template_dir = Path(template_dir)
+            
+            # Create necessary directories
+            self.output_dir.mkdir(parents=True, exist_ok=True)
+            (self.output_dir / 'static').mkdir(parents=True, exist_ok=True)
+            
+            # Initialize Jinja environment
+            self._setup_jinja_env()
+            
+            # Site configuration
+            self.site_config = self._load_site_config()
+            
+            logger.info("SiteGenerator initialized successfully")
+            
+        except Exception as e:
+            logger.error(f"Failed to initialize SiteGenerator: {str(e)}")
+            raise
+
+    def _setup_jinja_env(self):
+        """Initialize Jinja environment."""
         self.jinja_env = Environment(
             loader=FileSystemLoader(str(self.template_dir)),
             autoescape=True
@@ -83,14 +113,113 @@ class SiteGenerator:
             base_url = self.site_config['base_url']
             return f"{base_url}/{path.lstrip('/')}"
         self.jinja_env.globals['url_for'] = url_for
-        
-        # Site configuration
-        self.site_config = {
+
+    def _load_site_config(self) -> Dict:
+        """Load site configuration."""
+        return {
             'title': 'Jimi Land',
             'description': 'A personal website about music, life, and adventures',
             'author': 'Josh Brown',
             'base_url': os.getenv('SITE_BASE_URL', '')  # Get base URL from environment
         }
+
+    def optimize_image(self, image_path: str, max_width: int = 1200) -> str:
+        """
+        Optimize an image by resizing and compressing it, with caching.
+        
+        Args:
+            image_path: Path to the image file
+            max_width: Maximum width for the image
+            
+        Returns:
+            Path to the optimized image
+        """
+        try:
+            image_path = Path(image_path)
+            if not image_path.exists():
+                raise FileNotFoundError(f"Image not found: {image_path}")
+            
+            # Check if optimized version exists and is newer than original
+            optimized_path = image_path.parent / f"{image_path.stem}.optimized{image_path.suffix}"
+            if optimized_path.exists() and optimized_path.stat().st_mtime > image_path.stat().st_mtime:
+                logger.info(f"Using cached optimized image: {optimized_path}")
+                return str(optimized_path)
+                
+            with Image.open(image_path) as img:
+                # Calculate new dimensions
+                ratio = max_width / img.width if img.width > max_width else 1
+                new_size = (int(img.width * ratio), int(img.height * ratio))
+                
+                # Only resize if necessary
+                if ratio < 1:
+                    img = img.resize(new_size, Image.LANCZOS)
+                
+                # Save with optimization
+                img.save(
+                    optimized_path,
+                    quality=85,
+                    optimize=True,
+                    progressive=True
+                )
+                
+                logger.info(f"Created optimized image: {image_path} -> {optimized_path}")
+                return str(optimized_path)
+                
+        except Exception as e:
+            logger.error(f"Failed to optimize image {image_path}: {str(e)}")
+            return str(image_path)  # Return original path on failure
+
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=4, max=10)
+    )
+    def _fetch_notion_data(self, page_id: str) -> Dict:
+        """
+        Fetch data from Notion with retry logic.
+        
+        Args:
+            page_id: Notion page ID
+            
+        Returns:
+            Dictionary containing page data
+        """
+        try:
+            response = self.notion.pages.retrieve(page_id=page_id)
+            logger.info(f"Successfully fetched Notion page: {page_id}")
+            return response
+        except Exception as e:
+            logger.error(f"Error fetching Notion page {page_id}: {str(e)}")
+            raise
+
+    def _process_images(self, content: str) -> str:
+        """
+        Process and optimize images in content.
+        
+        Args:
+            content: HTML content containing images
+            
+        Returns:
+            Updated content with optimized images
+        """
+        try:
+            from bs4 import BeautifulSoup
+            
+            soup = BeautifulSoup(content, 'html.parser')
+            for img in soup.find_all('img'):
+                src = img.get('src')
+                if src and src.startswith('/static/'):
+                    # Optimize image and update src
+                    original_path = self.output_dir / src.lstrip('/')
+                    optimized_path = self.optimize_image(original_path)
+                    img['src'] = f"/static/{Path(optimized_path).name}"
+                    # Add lazy loading
+                    img['loading'] = 'lazy'
+                    
+            return str(soup)
+            
+        except Exception as e:
+            logger.error(f"Error processing images: {str(e)}")
+            return content
 
     def _calculate_reading_time(self, content: str) -> str:
         """
