@@ -29,9 +29,9 @@ SITE_TITLE = "Jimi Land"
 SITE_DESCRIPTION = "Personal blog powered by Notion"
 SITE_AUTHOR = "Josh Brown"
 
-# Use environment variable for base URL, defaulting to GitHub Pages URL
-SITE_BASE_URL = os.getenv('SITE_BASE_URL', '/jimiland')
-SITE_URL = f"https://cajunjimi.github.io{SITE_BASE_URL}"
+# Use environment variable for base URL, with empty default for custom domain
+SITE_BASE_URL = os.getenv('SITE_BASE_URL', '')
+SITE_URL = f"https://jimi.land{SITE_BASE_URL}"
 
 # Blog settings
 POSTS_PER_PAGE = 10
