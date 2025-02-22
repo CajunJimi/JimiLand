@@ -14,10 +14,10 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
@@ -38,6 +38,10 @@ jobs:
           ls -la
           python --version
           pip list
+          echo "Python path:"
+          python -c "import sys; print('\n'.join(sys.path))"
+          echo "Directory structure:"
+          find . -type d
           
       - name: Build site
         env:
@@ -48,9 +52,12 @@ jobs:
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
           SITE_BASE_URL: 'https://jimi.land'
         run: |
+          # Add the current directory to PYTHONPATH
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          
           # Run the site generator
           echo "Starting site generation..."
-          python -m src.generator.main
+          python -m src.generator.site_generator
           
           echo "Site generation complete. Checking output structure..."
           echo "Root directory contents:"
