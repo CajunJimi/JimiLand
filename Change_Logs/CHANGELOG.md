@@ -16,6 +16,18 @@
 ### Reason for Change
 To improve the visual presentation and maintainability of the portfolio section while ensuring proper display of project information.
 
+## [2024-01-09] Portfolio URL Fix
+
+### Files Affected
+- `src/generator/site_generator.py`
+
+### Changes Made
+- Modified the `url_for` function to handle the portfolio page URL specifically
+- Updated to return `portfolio.html` instead of a directory-style URL
+
+### Reason for Change
+To fix the portfolio page URL structure, ensuring it's accessible at `/portfolio.html` instead of `/portfolio/`
+
 ## [2024-01-09] Portfolio Page Generation Update
 
 ### Files Affected

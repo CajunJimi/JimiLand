@@ -117,6 +117,8 @@ class SiteGenerator:
         # Add url_for function for generating URLs
         def url_for(path):
             base_url = self.site_config['base_url']
+            if path == 'portfolio':
+                return f"{base_url}/portfolio.html"
             return f"{base_url}/{path.lstrip('/')}"
         self.jinja_env.globals['url_for'] = url_for
 
