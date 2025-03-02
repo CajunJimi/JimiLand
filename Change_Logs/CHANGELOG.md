@@ -27,3 +27,15 @@ To improve the visual presentation and maintainability of the portfolio section 
 
 ### Reason for Change
 To showcase the new LiveTranscript project in the portfolio section
+
+## [2025-03-02] Fixed Portfolio Template
+
+### Files Affected
+- `src/templates/portfolio.html`
+
+### Changes Made
+- Reverted back to original portfolio layout with YourAIVoiceJournal and SecureLogRedactor projects
+- Removed incorrectly added LiveTranscript project
+
+### Reason for Change
+To maintain consistency with the original portfolio design and focus on the correct projects
