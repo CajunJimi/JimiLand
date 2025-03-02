@@ -1,42 +1,17 @@
 # Changelog
 
-All notable changes to JimiLand will be documented in this file.
-
-## [2025-03-02]
-
-### Added
-- Added YourAIVoiceJournal.com to portfolio projects
-- Included project description and technology tags
-- Added secure external link to the project
+## [2024-03-02] Portfolio Template Update
 
 ### Files Affected
-- src/templates/portfolio.html
+- `/src/templates/portfolio.html`
 
-## [2025-02-22]
+### Changes Made
+- Enhanced portfolio template with improved styling and layout
+- Added YourAIVoiceJournal project with proper styling and metadata
+- Implemented responsive grid layout for project cards
+- Added SecureLogRedactor project as a second portfolio item
+- Improved accessibility with proper semantic HTML and ARIA attributes
+- Added dark mode support with appropriate color schemes
 
-### Added
-- Implemented proper URL handling for custom domain (jimi.land)
-- Added new `url_for` function for consistent URL generation
-- Added security attributes to portfolio links
-- Created logging structure and documentation practices
-
-### Changed
-- Updated base URL configuration to support custom domain
-- Modified navigation links to use new URL generation system
-- Updated portfolio links to open in new tabs with security attributes
-
-### Security
-- Added rel="noopener noreferrer" to external links
-- Moved API keys to GitHub Secrets
-
-### Files Affected
-- src/generator/site_generator.py
-- src/templates/base.html
-- src/templates/portfolio.html
-- src/templates/post.html
-- .github/workflows/deploy.yml
-
-### Technical Debt
-- Need to implement image optimization
-- Need to add proper error handling
-- Need to improve test coverage
+### Reason for Change
+To improve the visual presentation and maintainability of the portfolio section while ensuring proper display of project information.
