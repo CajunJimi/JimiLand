@@ -21,15 +21,9 @@ from datetime import datetime
 from dotenv import load_dotenv
 from notion_client import Client
 from jinja2 import Environment, FileSystemLoader
-import sys
-from pathlib import Path
-
-# Add src directory to Python path for imports
-sys.path.append(str(Path(__file__).parent.parent))
-
-from notion.processor import NotionProcessor
+from ..notion.processor import NotionProcessor
 from urllib.parse import quote
-from spotify.spotify import get_current_track
+from ..spotify.spotify import get_current_track
 import logging
 from PIL import Image
 from tenacity import retry, stop_after_attempt, wait_exponential
@@ -661,8 +655,11 @@ class SiteGenerator:
             'current_year': datetime.now().year
         })
         
-        # Write HTML directly to portfolio.html in output directory
-        with open(self.output_dir / 'portfolio.html', 'w', encoding='utf-8') as f:
+        # Create portfolio directory and write HTML
+        portfolio_dir = self.output_dir / 'portfolio'
+        portfolio_dir.mkdir(parents=True, exist_ok=True)
+        
+        with open(portfolio_dir / 'index.html', 'w', encoding='utf-8') as f:
             f.write(output)
 
     def _generate_archive_page(self, articles: List[Dict] = None):

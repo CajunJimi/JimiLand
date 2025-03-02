@@ -15,14 +15,3 @@
 
 ### Reason for Change
 To improve the visual presentation and maintainability of the portfolio section while ensuring proper display of project information.
-
-## [2024-01-09] Portfolio Page Generation Update
-
-### Files Affected
-- `src/generator/site_generator.py`
-
-### Changes Made
-- Modified portfolio page generation to write directly to output directory
-
-### Reason for Change
-Simplified URL structure by placing portfolio.html at root instead of in subdirectory
