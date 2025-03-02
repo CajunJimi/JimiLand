@@ -15,3 +15,15 @@
 
 ### Reason for Change
 To improve the visual presentation and maintainability of the portfolio section while ensuring proper display of project information.
+
+## [2025-03-02] Added LiveTranscript Project to Portfolio
+
+### Files Affected
+- `src/templates/portfolio.html`
+
+### Changes Made
+- Added LiveTranscript project to the portfolio page
+- Included project description, technologies (TypeScript, React, Web Speech API), and link
+
+### Reason for Change
+To showcase the new LiveTranscript project in the portfolio section
