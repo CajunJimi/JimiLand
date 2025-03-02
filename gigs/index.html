@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gigs - Jimi Land</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --accent-color: #3b82f6;
+            --border-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --accent-color: #60a5fa;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Base styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background-color: var(--accent-color);
+            z-index: 1000;
+            transition: width 0.1s ease-out;
+        }
+
+        /* Layout */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Typography */
+        h1 { font-size: 2rem; font-weight: 700; }
+        h2 { font-size: 1.5rem; font-weight: 600; }
+        h3 { font-size: 1.25rem; font-weight: 600; }
+        
+        /* Navigation */
+        .nav-link {
+            opacity: 0.8;
+            transition: opacity 0.3s;
+            font-size: 1rem;
+        }
+        
+        .nav-link:hover {
+            opacity: 1;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            background: none;
+            border: 1px solid var(--border-color);
+            transition: border-color 0.3s;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--text-color);
+        }
+
+        /* Article cards */
+        .article-card {
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            transition: transform 0.2s, border-color 0.3s;
+        }
+
+        .article-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--text-color);
+        }
+
+        .article-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .article-meta {
+            font-size: 0.875rem;
+            opacity: 0.7;
+        }
+
+        .article-excerpt {
+            margin-top: 1rem;
+            line-height: 1.6;
+        }
+    </style>
+
+    
+<link rel="icon" type="image/x-icon" href="https://jimi.land/static/favicon.ico">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+<style>
+    .gigs-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .view-toggle {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-bottom: 2rem;
+    }
+
+    .view-button {
+        padding: 0.5rem 1rem;
+        border: 1px solid currentColor;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.3s;
+    }
+
+    .view-button:hover,
+    .view-button.active {
+        opacity: 1;
+    }
+
+    .view-section {
+        display: none;
+    }
+
+    .view-section.active {
+        display: block;
+    }
+
+    #list-view {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .year-section {
+        margin-bottom: 3rem;
+    }
+
+    .year-heading {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        text-align: center;
+    }
+
+    .gig-grid {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .gig-item {
+        padding: 1.5rem;
+        border: 1px solid currentColor;
+        border-radius: 0.5rem;
+        opacity: 0.8;
+        transition: opacity 0.3s;
+    }
+
+    .gig-item:hover {
+        opacity: 1;
+    }
+
+    .gig-date {
+        font-size: 0.875rem;
+        opacity: 0.7;
+    }
+
+    .gig-artist {
+        font-size: 1.125rem;
+        font-weight: 500;
+        margin: 0.5rem 0;
+    }
+
+    #calendar-view {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    #calendar {
+        padding: 1rem;
+        border: 1px solid currentColor;
+        border-radius: 0.5rem;
+    }
+
+    .fc {
+        font-family: 'Inter', sans-serif;
+    }
+</style>
+
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="min-h-screen">
+        <header class="border-b border-[var(--border-color)] py-4 sticky top-0 bg-[var(--bg-color)] z-50">
+            <div class="container">
+                <div class="flex justify-between items-center">
+                    <h1 class="text-xl">
+                        <a href="https://jimi.land/" class="hover:opacity-75 transition-opacity">Jimi Land</a>
+                    </h1>
+                    <div class="flex items-center gap-6">
+                        <nav class="space-x-6">
+                            <a href="https://jimi.land/" class="nav-link">Home</a>
+                            <a href="https://jimi.land/about" class="nav-link">About</a>
+                            <a href="https://jimi.land/gigs" class="nav-link">Gigs</a>
+                            <a href="https://jimi.land/archive" class="nav-link">Archive</a>
+                            <a href="https://jimi.land/portfolio" class="nav-link">Portfolio</a>
+                        </nav>
+                        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                            <span class="light-icon">🌞</span>
+                            <span class="dark-icon" style="display: none;">🌙</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="container py-8">
+            
+<div class="gigs-container">
+    <div class="view-toggle">
+        <button class="view-button active" data-view="list">List View</button>
+        <button class="view-button" data-view="calendar">Calendar View</button>
+    </div>
+
+    <div class="view-section active" id="list-view">
+        
+            <div class="year-section">
+                <h2 class="year-heading">2024</h2>
+                <div class="gig-grid">
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">September 27, 2024</div>
+                            <div class="gig-artist">Dark Start Orchestra</div>
+                            <div class="gig-venue">Alexandria Palace</div>
+                            
+                            
+                                <div class="gig-notes">N/A</div>
+                            
+                        </div>
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">September 26, 2024</div>
+                            <div class="gig-artist">Dark Start Orchestra</div>
+                            <div class="gig-venue">Alexandria Palace</div>
+                            
+                            
+                                <div class="gig-notes">N/A</div>
+                            
+                        </div>
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">August 31, 2024</div>
+                            <div class="gig-artist">Manchester Psychedelic Festival - 2024</div>
+                            <div class="gig-venue">Manchester</div>
+                            
+                            
+                                <div class="gig-notes">N/A</div>
+                            
+                        </div>
+                    
+                </div>
+            </div>
+        
+            <div class="year-section">
+                <h2 class="year-heading">2023</h2>
+                <div class="gig-grid">
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">November 20, 2023</div>
+                            <div class="gig-artist">Greta Van Fleet</div>
+                            <div class="gig-venue">Glasgow</div>
+                            
+                            
+                                <div class="gig-notes">N/A</div>
+                            
+                        </div>
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">November 18, 2023</div>
+                            <div class="gig-artist">Billy Strings</div>
+                            <div class="gig-venue">Glasgow</div>
+                            
+                            
+                                <div class="gig-notes">N/A</div>
+                            
+                        </div>
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">November 15, 2023</div>
+                            <div class="gig-artist">Goose</div>
+                            <div class="gig-venue">Glasgow</div>
+                            
+                            
+                                <div class="gig-notes">N/A</div>
+                            
+                        </div>
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">October 30, 2023</div>
+                            <div class="gig-artist">Bob Dylan</div>
+                            <div class="gig-venue">Glasgow</div>
+                            
+                            
+                                <div class="gig-notes">N/A</div>
+                            
+                        </div>
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">September 20, 2023</div>
+                            <div class="gig-artist">Busted</div>
+                            <div class="gig-venue">SSE - Glasgow</div>
+                            
+                            
+                                <div class="gig-notes">N/A</div>
+                            
+                        </div>
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">August 26, 2023</div>
+                            <div class="gig-artist">Manchester Psychedelic Festival - 2023</div>
+                            <div class="gig-venue">Manchester</div>
+                            
+                            
+                        </div>
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">August 18, 2023</div>
+                            <div class="gig-artist">Billy and the Kids</div>
+                            <div class="gig-venue">New York</div>
+                            
+                            
+                                <div class="gig-notes">N/A</div>
+                            
+                        </div>
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">June 06, 2023</div>
+                            <div class="gig-artist">Rodger Waters</div>
+                            <div class="gig-venue">SSE Glasgow</div>
+                            
+                            
+                                <div class="gig-notes">N/A</div>
+                            
+                        </div>
+                    
+                </div>
+            </div>
+        
+            <div class="year-section">
+                <h2 class="year-heading">2022</h2>
+                <div class="gig-grid">
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">August 16, 2022</div>
+                            <div class="gig-artist">Los Bitchos</div>
+                            <div class="gig-venue">Edinburgh</div>
+                            
+                            
+                                <div class="gig-notes">N/A</div>
+                            
+                        </div>
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">June 28, 2022</div>
+                            <div class="gig-artist">Greta Van Fleet</div>
+                            <div class="gig-venue">02 Academy - Manchester </div>
+                            
+                            
+                                <div class="gig-notes">N/A</div>
+                            
+                        </div>
+                    
+                </div>
+            </div>
+        
+            <div class="year-section">
+                <h2 class="year-heading">2019</h2>
+                <div class="gig-grid">
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">May 07, 2019</div>
+                            <div class="gig-artist">Greta Van Fleet</div>
+                            <div class="gig-venue">Miami</div>
+                            
+                            
+                                <div class="gig-notes">N/A</div>
+                            
+                        </div>
+                    
+                </div>
+            </div>
+        
+            <div class="year-section">
+                <h2 class="year-heading">2018</h2>
+                <div class="gig-grid">
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">November 11, 2018</div>
+                            <div class="gig-artist">Greta Van Fleet</div>
+                            <div class="gig-venue">O2 Academy - London</div>
+                            
+                            
+                                <div class="gig-notes">N/A</div>
+                            
+                        </div>
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">July 18, 2018</div>
+                            <div class="gig-artist">Eric Clapton</div>
+                            <div class="gig-venue">Hyde Park - London</div>
+                            
+                            
+                                <div class="gig-notes">N/A</div>
+                            
+                        </div>
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">April 15, 2018</div>
+                            <div class="gig-artist">Arcade Fire</div>
+                            <div class="gig-venue">Glasgow</div>
+                            
+                            
+                        </div>
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">March 17, 2018</div>
+                            <div class="gig-artist">Frightened Rabbit</div>
+                            <div class="gig-venue">O2 Academy - Glasgow</div>
+                            
+                            
+                        </div>
+                    
+                </div>
+            </div>
+        
+            <div class="year-section">
+                <h2 class="year-heading">2017</h2>
+                <div class="gig-grid">
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">July 06, 2017</div>
+                            <div class="gig-artist">Arcade Fire</div>
+                            <div class="gig-venue">Castlefield Bowl</div>
+                            
+                            
+                        </div>
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">June 24, 2017</div>
+                            <div class="gig-artist">The Stone Roses</div>
+                            <div class="gig-venue">Glasgow</div>
+                            
+                            
+                        </div>
+                    
+                </div>
+            </div>
+        
+            <div class="year-section">
+                <h2 class="year-heading">2016</h2>
+                <div class="gig-grid">
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">December 08, 2016</div>
+                            <div class="gig-artist">Red Hot Chilli Peppers</div>
+                            <div class="gig-venue">Glasgow</div>
+                            
+                            
+                        </div>
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">November 21, 2016</div>
+                            <div class="gig-artist">Primal Scream</div>
+                            <div class="gig-venue">Edinburgh</div>
+                            
+                            
+                        </div>
+                    
+                </div>
+            </div>
+        
+            <div class="year-section">
+                <h2 class="year-heading">2011</h2>
+                <div class="gig-grid">
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">December 17, 2011</div>
+                            <div class="gig-artist">The View</div>
+                            <div class="gig-venue">Dunfermline</div>
+                            
+                            
+                        </div>
+                    
+                </div>
+            </div>
+        
+            <div class="year-section">
+                <h2 class="year-heading">2010</h2>
+                <div class="gig-grid">
+                    
+                        <div class="gig-item">
+                            <div class="gig-date">December 18, 2010</div>
+                            <div class="gig-artist">The View</div>
+                            <div class="gig-venue">Dunfermline</div>
+                            
+                            
+                        </div>
+                    
+                </div>
+            </div>
+        
+    </div>
+
+    <div class="view-section" id="calendar-view">
+        <div id="calendar"></div>
+    </div>
+</div>
+
+        </main>
+
+        <footer class="mt-auto py-6 text-center opacity-75">
+            <p>&copy;  Jimi Land</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            const lightIcon = document.querySelector('.light-icon');
+            const darkIcon = document.querySelector('.dark-icon');
+            
+            if (isDark) {
+                html.removeAttribute('data-theme');
+                lightIcon.style.display = 'inline';
+                darkIcon.style.display = 'none';
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                lightIcon.style.display = 'none';
+                darkIcon.style.display = 'inline';
+            }
+            
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        }
+
+        // Progress bar
+        function updateProgressBar() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved theme
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                document.querySelector('.light-icon').style.display = 'none';
+                document.querySelector('.dark-icon').style.display = 'inline';
+            }
+
+            // Setup progress bar
+            window.addEventListener('scroll', updateProgressBar);
+        });
+    </script>
+
+    
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+<script>
+var calendarEvents = [{"id": "33", "location": "London", "start": "2024-09-27", "title": "Dark Start Orchestra @ Alexandria Palace", "url": ""}, {"id": "32", "location": "London", "start": "2024-09-26", "title": "Dark Start Orchestra @ Alexandria Palace", "url": ""}, {"id": "13", "location": "Manchester", "start": "2024-08-31", "title": "Manchester Psychedelic Festival - 2024 @ Manchester", "url": ""}, {"id": "4", "location": "Glasgow", "start": "2023-11-20", "title": "Greta Van Fleet @ Glasgow", "url": ""}, {"id": "1", "location": "Glasgow", "start": "2023-11-18", "title": "Billy Strings @ Glasgow", "url": ""}, {"id": "2", "location": "Glasgow", "start": "2023-11-15", "title": "Goose @ Glasgow", "url": ""}, {"id": "5", "location": "Glasgow", "start": "2023-10-30", "title": "Bob Dylan @ Glasgow", "url": ""}, {"id": "14", "location": "Glasgow", "start": "2023-09-20", "title": "Busted @ SSE - Glasgow", "url": ""}, {"id": "16", "location": "Manchester", "start": "2023-08-26", "title": "Manchester Psychedelic Festival - 2023 @ Manchester", "url": ""}, {"id": "3", "location": "New York", "start": "2023-08-18", "title": "Billy and the Kids @ New York", "url": ""}, {"id": "9", "location": "Glasgow", "start": "2023-06-06", "title": "Rodger Waters @ SSE Glasgow", "url": ""}, {"id": "7", "location": "Edinburgh", "start": "2022-08-16", "title": "Los Bitchos @ Edinburgh", "url": ""}, {"id": "6", "location": "Manchester", "start": "2022-06-28", "title": "Greta Van Fleet @ 02 Academy - Manchester ", "url": ""}, {"id": "11", "location": "Miami", "start": "2019-05-07", "title": "Greta Van Fleet @ Miami", "url": ""}, {"id": "12", "location": "London", "start": "2018-11-11", "title": "Greta Van Fleet @ O2 Academy - London", "url": ""}, {"id": "10", "location": "London", "start": "2018-07-18", "title": "Eric Clapton @ Hyde Park - London", "url": ""}, {"id": "20", "location": "Manchester", "start": "2018-04-15", "title": "Arcade Fire @ Glasgow", "url": ""}, {"id": "22", "location": "Glasgow", "start": "2018-03-17", "title": "Frightened Rabbit @ O2 Academy - Glasgow", "url": ""}, {"id": "19", "location": "manchester", "start": "2017-07-06", "title": "Arcade Fire @ Castlefield Bowl", "url": ""}, {"id": "18", "location": "Glasgow", "start": "2017-06-24", "title": "The Stone Roses @ Glasgow", "url": ""}, {"id": "21", "location": "Glasgow", "start": "2016-12-08", "title": "Red Hot Chilli Peppers @ Glasgow", "url": ""}, {"id": "17", "location": "Edinburgh", "start": "2016-11-21", "title": "Primal Scream @ Edinburgh", "url": ""}, {"id": "24", "location": "Dunfermlin", "start": "2011-12-17", "title": "The View @ Dunfermline", "url": ""}, {"id": "23", "location": "Dunfermlin", "start": "2010-12-18", "title": "The View @ Dunfermline", "url": ""}];
+
+document.addEventListener('DOMContentLoaded', function() {
+    var viewButtons = document.querySelectorAll('.view-button');
+    var viewSections = document.querySelectorAll('.view-section');
+    var calendar = null;
+
+    viewButtons.forEach(function(button) {
+        button.addEventListener('click', function() {
+            var view = button.dataset.view;
+            
+            viewButtons.forEach(function(btn) {
+                btn.classList.remove('active');
+            });
+            button.classList.add('active');
+            
+            viewSections.forEach(function(section) {
+                section.classList.remove('active');
+                if (section.id === view + '-view') {
+                    section.classList.add('active');
+                }
+            });
+
+            if (view === 'calendar' && calendar) {
+                calendar.render();
+            }
+        });
+    });
+
+    var calendarEl = document.getElementById('calendar');
+    if (calendarEl) {
+        try {
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: calendarEvents,
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,dayGridYear'
+                },
+                height: 'auto',
+                firstDay: 1,
+                displayEventEnd: false,
+                eventDisplay: 'block',
+                dayMaxEvents: true
+            });
+            calendar.render();
+        } catch (error) {
+            console.error('Error initializing calendar:', error);
+        }
+    }
+});
+</script>
+
+</body>
+</html>
