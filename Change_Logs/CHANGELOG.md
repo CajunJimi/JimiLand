@@ -2,6 +2,16 @@
 
 All notable changes to JimiLand will be documented in this file.
 
+## [2025-03-02]
+
+### Added
+- Added YourAIVoiceJournal.com to portfolio projects
+- Included project description and technology tags
+- Added secure external link to the project
+
+### Files Affected
+- src/templates/portfolio.html
+
 ## [2025-02-22]
 
 ### Added
