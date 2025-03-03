@@ -68,6 +68,11 @@ jobs:
           echo "Starting site generation..."
           python -m src.generator.site_generator
           
+          # Create a direct portfolio.html file in the output directory
+          echo "Creating direct portfolio.html file..."
+          cp src/templates/portfolio.html output/portfolio-direct.html
+          cp direct-portfolio.html output/portfolio.html
+          
           echo "Site generation complete. Checking output structure..."
           echo "Root directory contents:"
           ls -la

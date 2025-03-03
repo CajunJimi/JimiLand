@@ -52,3 +52,15 @@ To maintain consistency with the original portfolio design and focus on the corr
 
 ### Reason for Change
 To ensure the portfolio page is properly deployed and accessible on the live site
+
+## [2025-03-03] Added Direct Portfolio File to Build Process
+
+### Files Affected
+- `.github/workflows/deploy.yml`
+
+### Changes Made
+- Added step in GitHub Actions workflow to directly copy the portfolio template to the output directory
+- Created an additional portfolio-direct.html file that can be accessed directly
+
+### Reason for Change
+To ensure portfolio content is accessible regardless of site generator configuration
