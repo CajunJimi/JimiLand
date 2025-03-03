@@ -39,3 +39,16 @@ To showcase the new LiveTranscript project in the portfolio section
 
 ### Reason for Change
 To maintain consistency with the original portfolio design and focus on the correct projects
+
+## [2025-03-03] Fixed Portfolio Page Deployment
+
+### Files Affected
+- `src/generator/site_generator.py`
+
+### Changes Made
+- Modified portfolio page generation to write directly to output directory as portfolio.html
+- Updated url_for function to correctly link to portfolio.html
+- Fixed navigation to ensure portfolio page is accessible
+
+### Reason for Change
+To ensure the portfolio page is properly deployed and accessible on the live site

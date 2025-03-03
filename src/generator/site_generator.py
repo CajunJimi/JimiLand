@@ -111,6 +111,8 @@ class SiteGenerator:
         # Add url_for function for generating URLs
         def url_for(path):
             base_url = self.site_config['base_url']
+            if path == 'portfolio':
+                return f"{base_url}/portfolio.html"
             return f"{base_url}/{path.lstrip('/')}"
         self.jinja_env.globals['url_for'] = url_for
 
@@ -655,11 +657,8 @@ class SiteGenerator:
             'current_year': datetime.now().year
         })
         
-        # Create portfolio directory and write HTML
-        portfolio_dir = self.output_dir / 'portfolio'
-        portfolio_dir.mkdir(parents=True, exist_ok=True)
-        
-        with open(portfolio_dir / 'index.html', 'w', encoding='utf-8') as f:
+        # Write portfolio.html directly to the output directory
+        with open(self.output_dir / 'portfolio.html', 'w', encoding='utf-8') as f:
             f.write(output)
 
     def _generate_archive_page(self, articles: List[Dict] = None):
