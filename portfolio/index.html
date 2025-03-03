@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Jimi Land</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+        }
+        .article-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #1a202c;
+                color: #e2e8f0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-12 text-center">
+            <h1 class="text-4xl font-bold mb-4">Portfolio</h1>
+            <p class="text-xl text-gray-600 dark:text-gray-400">My latest projects and work</p>
+        </header>
+        
+        <!-- Project Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- YourAIVoiceJournal.com -->
+            <div class="article-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold mb-3">YourAIVoiceJournal</h2>
+                <p class="text-gray-600 dark:text-gray-300 mb-4">An innovative web application that transforms voice recordings into organized journal entries using AI transcription and analysis.</p>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded-full text-sm">React</span>
+                    <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded-full text-sm">Web Speech API</span>
+                    <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded-full text-sm">GitHub Pages</span>
+                </div>
+                <a href="https://youraivicejournal.com" class="inline-block text-blue-600 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">View Project →</a>
+            </div>
+
+            <!-- SecureLogRedactor -->
+            <div class="article-card bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <h2 class="text-2xl font-semibold mb-3">SecureLogRedactor</h2>
+                <p class="text-gray-600 dark:text-gray-300 mb-4">A powerful tool for automatically redacting sensitive information from log files, ensuring data security and compliance.</p>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded-full text-sm">Python</span>
+                    <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded-full text-sm">RegEx</span>
+                    <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded-full text-sm">Security</span>
+                </div>
+                <a href="https://cajuntools.site/" class="inline-block text-blue-600 dark:text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">View Project →</a>
+            </div>
+        </div>
+        
+        <footer class="mt-12 text-center text-gray-600 dark:text-gray-400">
+            <p>© 2025 Jimi Land. All rights reserved.</p>
+            <p class="mt-2">
+                <a href="/" class="text-blue-600 dark:text-blue-400 hover:underline">Back to Home</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
