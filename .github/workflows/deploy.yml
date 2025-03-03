@@ -73,6 +73,11 @@ jobs:
           cp src/templates/portfolio.html output/portfolio-direct.html
           cp direct-portfolio.html output/portfolio.html
           
+          # Create portfolio directory with index.html
+          echo "Creating portfolio directory with index.html..."
+          mkdir -p output/portfolio
+          cp portfolio-index.html output/portfolio/index.html
+          
           echo "Site generation complete. Checking output structure..."
           echo "Root directory contents:"
           ls -la

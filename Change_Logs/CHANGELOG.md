@@ -64,3 +64,15 @@ To ensure the portfolio page is properly deployed and accessible on the live sit
 
 ### Reason for Change
 To ensure portfolio content is accessible regardless of site generator configuration
+
+## [2025-03-03 20:40] Portfolio Page Fix - Alternative Approach
+
+### Description
+Implemented a more direct approach to fix the portfolio page accessibility issue by creating a dedicated index.html file in the portfolio directory.
+
+### Files Affected
+- `.github/workflows/deploy.yml`
+- `portfolio-index.html` (new file)
+
+### Reason for Change
+Previous attempts to fix the portfolio page were unsuccessful. This approach creates a dedicated portfolio directory with an index.html file, which aligns with GitHub Pages' URL routing behavior. This should ensure the portfolio page is accessible at https://jimi.land/portfolio/ regardless of site generator configuration.

@@ -59,3 +59,18 @@ The portfolio page was not being properly deployed to the live site. The URL `ht
 
 ### Outcome
 The portfolio page should now be accessible at both `https://jimi.land/portfolio.html` and `https://jimi.land/portfolio/` with the updated content showing YourAIVoiceJournal project.
+
+## [2025-03-03 20:40] Portfolio Page Not Accessible - Follow-up
+
+### Issue Description
+Previous attempts to fix the portfolio page accessibility issue were unsuccessful. The page at `https://jimi.land/portfolio/` was still not showing the updated content with YourAIVoiceJournal project, even after implementing direct HTML file approach.
+
+### Resolution Steps
+1. Created a dedicated `portfolio-index.html` file with the complete portfolio content
+2. Modified GitHub Actions workflow to:
+   - Create a `portfolio` directory in the output
+   - Copy the `portfolio-index.html` file to `output/portfolio/index.html`
+3. This approach aligns with GitHub Pages' URL routing behavior, which looks for `index.html` files in directories
+
+### Outcome
+The portfolio page should now be accessible at `https://jimi.land/portfolio/` with the updated content showing YourAIVoiceJournal project. This approach creates the exact file structure that GitHub Pages expects for directory-based URLs.
