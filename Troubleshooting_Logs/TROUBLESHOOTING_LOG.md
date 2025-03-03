@@ -42,3 +42,20 @@ Portfolio links were opening in the same tab and lacked security attributes for 
 ### Outcome
 - Links now open safely in new tabs
 - Protected against potential security vulnerabilities
+
+## [2025-03-03] Portfolio Page Not Accessible
+
+### Issue Description
+The portfolio page was not being properly deployed to the live site. The URL `https://jimi.land/portfolio/` was showing but not displaying the updated content with YourAIVoiceJournal project.
+
+### Resolution Steps
+1. Analyzed site generator code and found that portfolio page was being generated in a subdirectory (`portfolio/index.html`)
+2. Modified site generator to write portfolio page directly to output directory as `portfolio.html`
+3. Updated URL generation in the `url_for` function to correctly link to `portfolio.html`
+4. Added direct HTML file approach as a fallback:
+   - Created a standalone HTML file with portfolio content
+   - Modified GitHub Actions workflow to copy this file directly to the output directory
+   - This ensures the content is accessible regardless of site generator configuration
+
+### Outcome
+The portfolio page should now be accessible at both `https://jimi.land/portfolio.html` and `https://jimi.land/portfolio/` with the updated content showing YourAIVoiceJournal project.
