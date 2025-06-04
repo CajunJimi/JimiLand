@@ -1,0 +1,166 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+# Permissions needed for GitHub Pages
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          
+      - name: Create required directories
+        run: |
+          mkdir -p output/static
+          mkdir -p logs
+          
+      - name: Debug environment
+        run: |
+          pwd
+          ls -la
+          python --version
+          pip list
+          echo "Python path:"
+          python -c "import sys; print('\n'.join(sys.path))"
+          echo "Directory structure:"
+          find . -type d
+          
+      - name: Build site
+        env:
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          NOTION_GIGS_DATABASE_ID: ${{ secrets.NOTION_GIGS_DATABASE_ID }}
+          SITE_BASE_URL: 'https://jimi.land'
+        run: |
+          # Add the current directory to PYTHONPATH
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
+          
+          # Run the site generator
+          echo "Starting site generation..."
+          python build.py
+          
+          # Create fallback gigs page if needed
+          if [ ! -f "output/gigs/index.html" ]; then
+            echo "WARNING: Build failed - gigs page not generated! Creating a simple gigs page..."
+            
+            # Create a simple HTML page with the gigs data
+            mkdir -p output/gigs
+            mkdir -p output/calendar
+            
+            cat > output/gigs/index.html << 'EOL'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gigs - Jimi Land</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { color: #333; }
+        .updated { color: #666; font-size: 0.8em; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <h1>Upcoming Gigs</h1>
+    <p>Last updated: $(date)</p>
+    
+    <div class="gigs">
+        <p>Gigs information is currently being updated. Please check back soon.</p>
+    </div>
+    
+    <p class="updated">This is a simplified version of the gigs page. The full version is coming soon.</p>
+</body>
+</html>
+EOL
+
+            # Copy to calendar directory as well
+            cp output/gigs/index.html output/calendar/index.html
+            
+            echo "Created simple gigs page."
+          fi
+          
+          # Create direct access files
+          cp output/gigs/index.html output/gigs.html
+          cp output/calendar/index.html output/calendar.html
+          
+          # Create robots.txt
+          cat > output/robots.txt << 'EOL'
+User-agent: *
+Allow: /
+Sitemap: https://jimi.land/sitemap.xml
+EOL
+
+          # Create sitemap.xml
+          cat > output/sitemap.xml << 'EOL'
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://jimi.land/</loc>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://jimi.land/gigs/</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://jimi.land/calendar/</loc>
+    <priority>0.9</priority>
+  </url>
+</urlset>
+EOL
+
+          # Create CNAME file
+          echo "jimi.land" > output/CNAME
+          
+          echo "Site generation complete. Checking output structure..."
+          echo "Root directory contents:"
+          ls -la
+          echo "\nOutput directory contents:"
+          ls -la output/
+          
+          # Log build completion
+          echo "Site built successfully at $(date)" >> logs/build.log
+          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output
+          cname: jimi.land
+          force_orphan: true
+          
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: logs/
+          retention-days: 7
