@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gigs - Jimi Land</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { color: #333; }
+        .gig { margin-bottom: 20px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        .date { font-weight: bold; }
+        .updated { color: #666; font-size: 0.8em; margin-top: 40px; }
+    </style>
+</head>
+<body>
+    <h1>Upcoming Gigs</h1>
+    <p>Last updated: $(date)</p>
+    
+    <div class="gigs">
+        <pre>
+$(cat gigs_data.txt)
+        </pre>
+    </div>
+    
+    <p class="updated">This is a simplified version of the gigs page. The full version is coming soon.</p>
+</body>
+</html>
